@@ -11,10 +11,7 @@ fun main() {
 
     fun part1(input: List<String>): Int {
         return input.map { rugzakContent ->
-            rugzakContent.windowed(
-                size = rugzakContent.length / 2,
-                step = rugzakContent.length / 2
-            )
+            rugzakContent.chunked(size = rugzakContent.length / 2)
         }.map { compartmentValues ->
             compartmentValues[0].toSet()
                 .intersect(
@@ -27,7 +24,7 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.windowed(3, 3)
+        return input.chunked(3)
             .map { groupRugzakContent ->
                 groupRugzakContent
                     .map { it.toSet() }
