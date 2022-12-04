@@ -6,22 +6,20 @@ fun main() {
 
     fun List<String>.toRangeSets() = map { pair ->
         pair.split(",")
-            .map {
-                it.split("-")
+            .map { pairString ->
+                pairString.split("-")
+                    .map { it.toUInt() }
             }
     }.map { pairRangeString ->
         pairRangeString.map { indexValues ->
-            UIntRange(indexValues[0].toUInt(), indexValues[1].toUInt()).toSet()
+            UIntRange(indexValues[0], indexValues[1]).toSet()
         }
     }
 
     fun part1(input: List<String>): Int {
         return input.toRangeSets().map { pairRange ->
             val intersect = pairRange[0].intersect(pairRange[1])
-            if (
-                intersect.equals(pairRange[1]) ||
-                intersect.equals(pairRange[0])
-            ) 1 else 0
+            if (intersect == pairRange[1] || intersect == pairRange[0]) 1 else 0
         }.sum()
     }
 
