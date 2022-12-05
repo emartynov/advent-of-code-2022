@@ -19,7 +19,7 @@ private class Schema(
         return this
     }
 
-    fun move(move: Move): Schema {
+    fun move(move: Move, transform: (List<Char>) -> List<Char> = { it }): Schema {
         val fromStack = get(move.fromIndex)
         val toStack = get(move.toIndex)
 
@@ -30,11 +30,11 @@ private class Schema(
             updatedStack = fromStack.dropLast(move.numberOfCrates)
         ).updateStack(
             indexFromOne = move.toIndex,
-            updatedStack = toStack + elements.reversed()
+            updatedStack = toStack + transform.invoke(elements)
         )
     }
 
-    fun  allLast(): String = stacks.map { it.lastOrNull()?.toString().orEmpty() }
+    fun allLast(): String = stacks.map { it.lastOrNull()?.toString().orEmpty() }
         .joinToString("")
 }
 
@@ -74,25 +74,27 @@ fun main() {
         return initialSchema to moves
     }
 
-    fun playMoves(schema: Schema, moves: List<Move>): Schema =
-        moves.fold(schema) { accSchema, move -> accSchema.move(move) }
+    fun playMoves(schema: Schema, moves: List<Move>, transform: (List<Char>) -> List<Char> = { it }): Schema =
+        moves.fold(schema) { accSchema, move -> accSchema.move(move, transform) }
 
     fun part1(input: List<String>): String {
+        val data = readStacksAndMoves(input)
+        val updatedSchema = playMoves(data.first, data.second) { it.reversed() }
+        return updatedSchema.allLast()
+    }
+
+    fun part2(input: List<String>): String {
         val data = readStacksAndMoves(input)
         val updatedSchema = playMoves(data.first, data.second)
         return updatedSchema.allLast()
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
-    }
-
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("day05/Day05_test")
     check(part1(testInput) == "CMZ")
-//    check(part2(testInput) == 4)
+    check(part2(testInput) == "MCD")
 
     val input = readInput("day05/Day05")
     println(part1(input))
-//    println(part2(input))
+    println(part2(input))
 }
